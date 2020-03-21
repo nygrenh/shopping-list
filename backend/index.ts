@@ -17,10 +17,18 @@ const knex = Knex(
 
 Model.knex(knex)
 
+const secret = process.env.SECRET || "secret"
+
 const app = new Koa()
 const router = new Router()
 const server = createServer(app.callback())
 const io = socketIo(server)
+
+require("socketio-auth")(io, {
+  authenticate: function(socket, data, callback) {
+    return callback(null, data.secret === secret)
+  },
+})
 
 io.on("connection", function(socket) {
   console.log("Client connected")
@@ -32,6 +40,11 @@ io.on("connection", function(socket) {
 })
 
 router.get("/api/tasks", async (ctx, next) => {
+  if (ctx.req.headers.authorization !== secret) {
+    ctx.status = 403
+    ctx.body = { error: "Forbidden" }
+    return
+  }
   ctx.body = await Item.query().orderBy("created_at")
 })
 

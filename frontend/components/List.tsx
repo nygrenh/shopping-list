@@ -12,6 +12,7 @@ import {
 import { v4 as uuidv4 } from "uuid"
 import socket from "../lib/socket"
 import axios from "axios"
+import { useRouter } from "next/dist/client/router"
 
 const useListItems = () => {
   const dispatch = useDispatch()
@@ -51,6 +52,8 @@ const useListItems = () => {
 }
 
 const List = () => {
+  const router = useRouter()
+  const id = router?.query?.id?.toString()
   const {
     listItems,
     addNewItem,
@@ -62,12 +65,15 @@ const List = () => {
   } = useListItems()
   useEffect(() => {
     ;(async () => {
-      const data = await axios.get("/api/tasks")
+      const data = await axios.get("/api/tasks", {
+        headers: { Authorization: id },
+      })
       updateTasksFromServer(data.data)
       if (!socket) {
         // We are on the server
         return
       }
+      socket.emit("authentication", { secret: id })
       socket.on("action", action => {
         serverDispatch(action)
       })
