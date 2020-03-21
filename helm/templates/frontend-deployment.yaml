@@ -31,10 +31,10 @@ spec:
             - name: frontend-http
               containerPort: 3000
               protocol: TCP
-          readinessProbe:
-            httpGet:
-              path: /
-              port: frontend-http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: frontend-http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
