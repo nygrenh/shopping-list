@@ -6,9 +6,8 @@ exports.up = async (knex: Knex): Promise<any> => {
     t.uuid("id")
       .primary()
       .defaultTo(knex.raw("uuid_generate_v4()"))
-    t.text("name").notNullable()
-    t.dateTime("starts_at").notNullable()
-    t.dateTime("ends_at").notNullable()
+    t.text("text").notNullable()
+    t.boolean("checked").notNullable().defaultTo(false)
     t.timestamps(true, true)
   })
 

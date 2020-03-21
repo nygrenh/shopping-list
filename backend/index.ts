@@ -4,7 +4,8 @@ import * as socketIo from "socket.io"
 import * as Router from "koa-router"
 import Item from "./models/Item"
 import { Model } from "objection"
-import * as cors from "@koa/cors"
+const cors = require("@koa/cors")
+import handleAction from "./handleAction"
 
 const knexConfig = require("./knexfile")
 const Knex = require("knex")
@@ -25,6 +26,7 @@ io.on("connection", function(socket) {
   console.log("Client connected")
   socket.on("action", function(msg) {
     console.log(`Received an action: ${JSON.stringify(msg)}`)
+    handleAction(msg)
     socket.broadcast.emit("action", msg)
   })
 })
