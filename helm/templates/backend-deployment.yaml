@@ -31,10 +31,13 @@ spec:
             - name: backend-http
               containerPort: 3001
               protocol: TCP
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          envFrom:
+          - secretRef:
+              name: env-secret
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: backend-http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

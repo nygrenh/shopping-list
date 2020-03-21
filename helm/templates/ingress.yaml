@@ -36,7 +36,11 @@ spec:
             backend:
               serviceName: {{ $fullName }}-frontend
               servicePort: {{ $svcPort }}
-          - path: {{ . }}/api
+          - path: {{ . }}api
+            backend:
+              serviceName: {{ $fullName }}-backend
+              servicePort: {{ $svcPort }}
+          - path: {{ . }}socket.io
             backend:
               serviceName: {{ $fullName }}-backend
               servicePort: {{ $svcPort }}

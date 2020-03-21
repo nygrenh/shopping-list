@@ -31,7 +31,7 @@ io.on("connection", function(socket) {
   })
 })
 
-router.get("/tasks", async (ctx, next) => {
+router.get("/api/tasks", async (ctx, next) => {
   ctx.body = await Item.query().orderBy("created_at")
 })
 
