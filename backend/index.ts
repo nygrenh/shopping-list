@@ -1,7 +1,7 @@
-import * as Koa from "koa"
+import Koa from "koa"
 import { createServer } from "http"
-import * as socketIo from "socket.io"
-import * as Router from "koa-router"
+import socketIo from "socket.io"
+import Router from "koa-router"
 import Item from "./models/Item"
 import { Model } from "objection"
 const cors = require("@koa/cors")
@@ -32,7 +32,7 @@ io.on("connection", function(socket) {
 })
 
 router.get("/tasks", async (ctx, next) => {
-  ctx.body = await Item.query()
+  ctx.body = await Item.query().orderBy("created_at")
 })
 
 app
