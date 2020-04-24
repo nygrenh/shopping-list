@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useTypedSelector } from "../store"
 import {
@@ -13,9 +13,16 @@ import { v4 as uuidv4 } from "uuid"
 import socket from "../lib/socket"
 import axios from "axios"
 import { useRouter } from "next/dist/client/router"
+import { Dispatch } from "redux"
 
-const useListItems = () => {
-  const dispatch = useDispatch()
+const useListItems = (setDisconnected) => {
+  const originalDispatch = useDispatch()
+  const dispatch: Dispatch<any> = (action) => {
+    if (!socket.connected) {
+      setDisconnected(true)
+    }
+    return originalDispatch(action)
+  }
   const listItems = useTypedSelector(state => state.listItems)
   const addNewItem = () => {
     dispatch({ type: "CREATE_ITEM", id: uuidv4() })
@@ -54,6 +61,7 @@ const useListItems = () => {
 const List = () => {
   const router = useRouter()
   const id = router?.query?.id?.toString()
+  const [disconnected, setDisconnected] = useState(false)
   const {
     listItems,
     addNewItem,
@@ -62,7 +70,7 @@ const List = () => {
     removeItem,
     serverDispatch,
     updateTasksFromServer,
-  } = useListItems()
+  } = useListItems(setDisconnected)
   useEffect(() => {
     ;(async () => {
       const data = await axios.get("/api/tasks", {
@@ -82,6 +90,10 @@ const List = () => {
 
   if (!listItems) {
     return <div>Loading...</div>
+  }
+
+  if (disconnected) {
+    return <div>Connection lost. Please reload the page.</div>
   }
   return (
     <>
