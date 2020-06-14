@@ -16,6 +16,7 @@ import { Dispatch } from "redux"
 import OptionsMenu from "./OptionsMenu"
 import ShoppingListItem from "./ShoppingListItem"
 import styled from "styled-components"
+import { useCheckPeriodically } from "../hooks/useCheckPeriodically"
 
 const useListItems = setDisconnected => {
   const originalDispatch = useDispatch()
@@ -66,18 +67,23 @@ const useListItems = setDisconnected => {
     removeItem,
     serverDispatch,
     updateTasksFromServer,
-    deleteChecked
+    deleteChecked,
   }
 }
 
 const StyledDivider = styled(Divider)`
-  margin: 1rem 0;
+  margin: 1.5rem 0;
 `
 
 const SubTitle = styled(Typography)`
   font-size: 1rem;
   font-weight: bold;
   color: #4e4e4e;
+`
+
+const ListWrapper = styled.div`
+  margin: 0 1rem;
+  margin-bottom: 0.5rem;
 `
 
 const List = () => {
@@ -95,6 +101,7 @@ const List = () => {
     serverDispatch,
     updateTasksFromServer,
   } = useListItems(setDisconnected)
+
   useEffect(() => {
     ;(async () => {
       try {
@@ -133,33 +140,37 @@ const List = () => {
   const unChecked = listItems.filter(item => !item.checked)
   return (
     <>
-      <MaterialList>
-        {unChecked.map(item => (
-          <ShoppingListItem
-            key={item.id}
-            item={item}
-            updateText={updateText}
-            toggleChecked={toggleChecked}
-          />
-        ))}
-      </MaterialList>
+      <ListWrapper>
+        <MaterialList>
+          {unChecked.map(item => (
+            <ShoppingListItem
+              key={item.id}
+              item={item}
+              updateText={updateText}
+              toggleChecked={toggleChecked}
+            />
+          ))}
+        </MaterialList>
 
-      <Button onClick={addNewItem} variant="outlined" fullWidth>
-        Uusi
-      </Button>
+        <Button onClick={addNewItem} variant="outlined" fullWidth>
+          Uusi
+        </Button>
+      </ListWrapper>
       <StyledDivider />
       <SubTitle variant="h2">Ostetut ostokset</SubTitle>
-      <MaterialList>
-        {checked.map(item => (
-          <ShoppingListItem
-            key={item.id}
-            item={item}
-            updateText={updateText}
-            toggleChecked={toggleChecked}
-          />
-        ))}
-      </MaterialList>
-      <OptionsMenu onDeleteCheked={deleteChecked} />
+      <ListWrapper>
+        <MaterialList>
+          {checked.map(item => (
+            <ShoppingListItem
+              key={item.id}
+              item={item}
+              updateText={updateText}
+              toggleChecked={toggleChecked}
+            />
+          ))}
+        </MaterialList>
+      </ListWrapper>
+      {checked.length > 0 && <OptionsMenu onDeleteCheked={deleteChecked} />}
     </>
   )
 }

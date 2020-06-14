@@ -1,18 +1,26 @@
-import React, { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import { useTypedSelector } from "../../store"
-import { ListItem, ListItemIcon, Checkbox, TextField } from "@material-ui/core"
+import React from "react"
+import { ListItemIcon, Checkbox, TextField } from "@material-ui/core"
+import styled from "styled-components"
+
+const StyledListItem = styled.div`
+  display: flex;
+  margin-bottom: 1rem;
+`
+
+const StyledCheckbox = styled(Checkbox)`
+  position: relative;
+  left: -10px;
+`
 
 export default ({ item, toggleChecked, updateText }) => (
-  <ListItem key={item.id}>
-    <ListItemIcon>
-      <Checkbox
-        onClick={() => {
-          toggleChecked(item.id, !item.checked)
-        }}
-        checked={item.checked}
-      />
-    </ListItemIcon>
+  <StyledListItem>
+    <StyledCheckbox
+      onClick={() => {
+        toggleChecked(item.id, !item.checked)
+      }}
+      checked={item.checked}
+    />
+
     <TextField
       onChange={e => {
         updateText(item.id, e.target.value)
@@ -21,5 +29,5 @@ export default ({ item, toggleChecked, updateText }) => (
       value={item.text}
       variant="outlined"
     />
-  </ListItem>
+  </StyledListItem>
 )
