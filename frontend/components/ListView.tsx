@@ -12,6 +12,9 @@ import OptionsMenu from "./OptionsMenu"
 import styled from "styled-components"
 import List from "./List"
 
+// @ts-ignore
+import { usePageVisibility } from 'react-page-visibility';
+
 const useListItems = setDisconnected => {
   const originalDispatch = useDispatch()
   const dispatch: Dispatch<any> = action => {
@@ -96,7 +99,14 @@ const ListView = () => {
     updateTasksFromServer,
   } = useListItems(setDisconnected)
 
+  const pageIsVisible = usePageVisibility()
+
   useEffect(() => {
+    updateTasksFromServer(null)
+
+    if (!pageIsVisible) {
+      return
+    }
     ;(async () => {
       try {
         const data = await axios.get("/api/tasks", {
@@ -111,12 +121,17 @@ const ListView = () => {
         // We are on the server
         return
       }
+      if (!socket.connected) {
+        // Sometimes reconnection doensn't work automatically when returning
+        // to the page on mobile
+        socket.connect()
+      }
       socket.emit("authentication", { secret: id })
       socket.on("action", action => {
         serverDispatch(action)
       })
     })()
-  }, [])
+  }, [pageIsVisible])
 
   if (error) {
     return <Alert severity="error">Lataaminen ei onnistunut.</Alert>
