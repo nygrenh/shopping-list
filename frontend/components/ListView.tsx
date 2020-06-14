@@ -14,6 +14,7 @@ import List from "./List"
 import useInterval from "@use-it/interval"
 
 let countSecondsDisconnected = 0
+let counterPreviouslyRan = new Date()
 
 // @ts-ignore
 import { usePageVisibility } from "react-page-visibility"
@@ -92,6 +93,7 @@ const ListView = () => {
   const id = router?.query?.id?.toString()
   const [disconnected, setDisconnected] = useState(false)
   const [error, setError] = useState(false)
+  const [refreshToggle, setRefreshToggle] = useState(false)
   const {
     listItems,
     addNewItem,
@@ -106,6 +108,14 @@ const ListView = () => {
   const pageIsVisible = usePageVisibility()
 
   useInterval(() => {
+    const now = new Date()
+    const timeDifferenceSeconds =
+      (counterPreviouslyRan.getTime() - now.getTime()) / 1000
+    counterPreviouslyRan = now
+    if (timeDifferenceSeconds >= 10) {
+      // we've been sleeping, time to refresh
+      setRefreshToggle(v => !v)
+    }
     if (socket.connected) {
       countSecondsDisconnected = 0
       return
@@ -150,7 +160,7 @@ const ListView = () => {
         serverDispatch(action)
       })
     })()
-  }, [pageIsVisible])
+  }, [pageIsVisible, refreshToggle])
 
   if (error) {
     return <Alert severity="error">Lataaminen ei onnistunut.</Alert>
