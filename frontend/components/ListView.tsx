@@ -15,10 +15,10 @@ import List from "./List"
 // @ts-ignore
 import { usePageVisibility } from 'react-page-visibility';
 
-const useListItems = setDisconnected => {
+const useListItems = (setDisconnected) => {
   const originalDispatch = useDispatch()
-  const dispatch: Dispatch<any> = action => {
-    if (!socket.connected) {
+  const dispatch: Dispatch<any> = (action, checkDisconnected = true) => {
+    if (checkDisconnected && !socket.connected) {
       setDisconnected(true)
     }
     return originalDispatch(action)
@@ -48,8 +48,9 @@ const useListItems = setDisconnected => {
     dispatch({ type: "DELETE_CHECKED" })
   }
 
-  const serverDispatch = action => {
-    dispatch({ ...action, fromServer: true })
+  const serverDispatch = (action) => {
+    // @ts-ignore
+    dispatch({ ...action, fromServer: true }, false)
   }
 
   const updateTasksFromServer = payload => {
