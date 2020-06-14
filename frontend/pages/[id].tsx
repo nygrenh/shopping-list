@@ -1,6 +1,6 @@
 import React from "react"
 import { withRedux } from "../lib/redux"
-import List from "../components/List"
+import ListView from "../components/ListView"
 import { Container, Typography, CircularProgress } from "@material-ui/core"
 import { useCheckPeriodically } from "../hooks/useCheckPeriodically"
 import socket from "../lib/socket"
@@ -26,7 +26,7 @@ const IndexPage = () => {
           </>
         )}
       </StyledTypography>
-      <List />
+      <ListView />
     </Container>
   )
 }
