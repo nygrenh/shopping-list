@@ -9,15 +9,17 @@ import {
   Button,
   TextField,
 } from "@material-ui/core"
+import { Alert } from "@material-ui/lab"
 import { v4 as uuidv4 } from "uuid"
 import socket from "../lib/socket"
 import axios from "axios"
 import { useRouter } from "next/dist/client/router"
 import { Dispatch } from "redux"
+import OptionsMenu from "./OptionsMenu"
 
-const useListItems = (setDisconnected) => {
+const useListItems = setDisconnected => {
   const originalDispatch = useDispatch()
-  const dispatch: Dispatch<any> = (action) => {
+  const dispatch: Dispatch<any> = action => {
     if (!socket.connected) {
       setDisconnected(true)
     }
@@ -62,6 +64,7 @@ const List = () => {
   const router = useRouter()
   const id = router?.query?.id?.toString()
   const [disconnected, setDisconnected] = useState(false)
+  const [error, setError] = useState(false)
   const {
     listItems,
     addNewItem,
@@ -73,10 +76,15 @@ const List = () => {
   } = useListItems(setDisconnected)
   useEffect(() => {
     ;(async () => {
-      const data = await axios.get("/api/tasks", {
-        headers: { Authorization: id },
-      })
-      updateTasksFromServer(data.data)
+      try {
+        const data = await axios.get("/api/tasks", {
+          headers: { Authorization: id },
+        })
+        updateTasksFromServer(data.data)
+      } catch (_e) {
+        setError(true)
+      }
+
       if (!socket) {
         // We are on the server
         return
@@ -88,15 +96,20 @@ const List = () => {
     })()
   }, [])
 
+  if (error) {
+    return <Alert severity="error">Lataaminen ei onnistunut.</Alert>
+  }
+
   if (!listItems) {
-    return <div>Loading...</div>
+    return <div>Ladataan...</div>
   }
 
   if (disconnected) {
-    return <div>Connection lost. Please reload the page.</div>
+    return <Alert severity="error">Yhteys katkesi. Lataa sivu uudestaan.</Alert>
   }
   return (
     <>
+      <OptionsMenu />
       <MaterialList>
         {listItems.map(item => (
           <ListItem key={item.id}>
