@@ -11,11 +11,14 @@ import { Dispatch } from "redux"
 import OptionsMenu from "./OptionsMenu"
 import styled from "styled-components"
 import List from "./List"
+import useInterval from "@use-it/interval"
+
+let countSecondsDisconnected = 0
 
 // @ts-ignore
-import { usePageVisibility } from 'react-page-visibility';
+import { usePageVisibility } from "react-page-visibility"
 
-const useListItems = (setDisconnected) => {
+const useListItems = setDisconnected => {
   const originalDispatch = useDispatch()
   const dispatch: Dispatch<any> = (action, checkDisconnected = true) => {
     if (checkDisconnected && !socket.connected) {
@@ -48,7 +51,7 @@ const useListItems = (setDisconnected) => {
     dispatch({ type: "DELETE_CHECKED" })
   }
 
-  const serverDispatch = (action) => {
+  const serverDispatch = action => {
     // @ts-ignore
     dispatch({ ...action, fromServer: true }, false)
   }
@@ -101,6 +104,21 @@ const ListView = () => {
   } = useListItems(setDisconnected)
 
   const pageIsVisible = usePageVisibility()
+
+  useInterval(() => {
+    if (socket.connected) {
+      countSecondsDisconnected = 0
+      return
+    }
+    if (
+      countSecondsDisconnected > 1 &&
+      countSecondsDisconnected < 20 &&
+      countSecondsDisconnected % 2 === 0
+    ) {
+      socket.connect()
+    }
+    countSecondsDisconnected = countSecondsDisconnected + 1
+  }, 1000)
 
   useEffect(() => {
     updateTasksFromServer(null)
