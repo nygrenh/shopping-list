@@ -21,6 +21,9 @@ const handleAction = async (action: any) => {
     case "REMOVE_ITEM":
       await Item.query().deleteById(action.id)
       break
+      case "DELETE_CHECKED":
+        await Item.query().where("checked", true).delete()
+        break
   }
 }
 
