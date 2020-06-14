@@ -5,7 +5,7 @@ import streamChangesMiddleWare from "./lib/streamChangesMiddleware"
 
 const listItemsIntialState = null
 
-const listItemsReducer = (state = listItemsIntialState, action): ListItem[] => {
+const listItemsReducer = (state: ListItem[] = listItemsIntialState, action): ListItem[] => {
   switch (action.type) {
     case "CREATE_ITEM":
       return [...state, { id: action.id, text: "", checked: false }]
@@ -27,6 +27,10 @@ const listItemsReducer = (state = listItemsIntialState, action): ListItem[] => {
     case "REMOVE_ITEM":
       const index = state.findIndex(o => o.id === action.id)
       return [...state.slice(0, index), ...state.slice(index + 1)]
+
+      case "DELETE_CHECKED":
+        const itemsToKeep = state.filter(o => !o.checked)
+        return [...itemsToKeep]
 
     case "UPDATE_TASKS_FROM_SERVER":
       return action.payload

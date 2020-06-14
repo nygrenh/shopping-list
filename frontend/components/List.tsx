@@ -3,11 +3,9 @@ import { useDispatch } from "react-redux"
 import { useTypedSelector } from "../store"
 import {
   List as MaterialList,
-  ListItem,
-  ListItemIcon,
-  Checkbox,
   Button,
-  TextField,
+  Typography,
+  Divider,
 } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { v4 as uuidv4 } from "uuid"
@@ -16,6 +14,8 @@ import axios from "axios"
 import { useRouter } from "next/dist/client/router"
 import { Dispatch } from "redux"
 import OptionsMenu from "./OptionsMenu"
+import ShoppingListItem from "./ShoppingListItem"
+import styled from "styled-components"
 
 const useListItems = setDisconnected => {
   const originalDispatch = useDispatch()
@@ -31,6 +31,10 @@ const useListItems = setDisconnected => {
   }
 
   const toggleChecked = (id, value) => {
+    const text = listItems.find(item => item.id === id)?.text
+    if (text === "") {
+      return removeItem(id)
+    }
     dispatch({ type: "TOGGLE_CHECKED", id, value })
   }
 
@@ -41,6 +45,11 @@ const useListItems = setDisconnected => {
   const removeItem = id => {
     dispatch({ type: "REMOVE_ITEM", id })
   }
+
+  const deleteChecked = () => {
+    dispatch({ type: "DELETE_CHECKED" })
+  }
+
   const serverDispatch = action => {
     dispatch({ ...action, fromServer: true })
   }
@@ -57,8 +66,19 @@ const useListItems = setDisconnected => {
     removeItem,
     serverDispatch,
     updateTasksFromServer,
+    deleteChecked
   }
 }
+
+const StyledDivider = styled(Divider)`
+  margin: 1rem 0;
+`
+
+const SubTitle = styled(Typography)`
+  font-size: 1rem;
+  font-weight: bold;
+  color: #4e4e4e;
+`
 
 const List = () => {
   const router = useRouter()
@@ -71,6 +91,7 @@ const List = () => {
     toggleChecked,
     updateText,
     removeItem,
+    deleteChecked,
     serverDispatch,
     updateTasksFromServer,
   } = useListItems(setDisconnected)
@@ -107,41 +128,38 @@ const List = () => {
   if (disconnected) {
     return <Alert severity="error">Yhteys katkesi. Lataa sivu uudestaan.</Alert>
   }
+
+  const checked = listItems.filter(item => item.checked)
+  const unChecked = listItems.filter(item => !item.checked)
   return (
     <>
-      <OptionsMenu />
       <MaterialList>
-        {listItems.map(item => (
-          <ListItem key={item.id}>
-            <ListItemIcon>
-              <Checkbox
-                onClick={() => {
-                  toggleChecked(item.id, !item.checked)
-                }}
-                checked={item.checked}
-              />
-            </ListItemIcon>
-            <TextField
-              onChange={e => {
-                updateText(item.id, e.target.value)
-              }}
-              fullWidth
-              value={item.text}
-              variant="outlined"
-            />
-            <Button
-              onClick={() => {
-                removeItem(item.id)
-              }}
-            >
-              Poista
-            </Button>
-          </ListItem>
+        {unChecked.map(item => (
+          <ShoppingListItem
+            key={item.id}
+            item={item}
+            updateText={updateText}
+            toggleChecked={toggleChecked}
+          />
         ))}
       </MaterialList>
+
       <Button onClick={addNewItem} variant="outlined" fullWidth>
         Uusi
       </Button>
+      <StyledDivider />
+      <SubTitle variant="h2">Ostetut ostokset</SubTitle>
+      <MaterialList>
+        {checked.map(item => (
+          <ShoppingListItem
+            key={item.id}
+            item={item}
+            updateText={updateText}
+            toggleChecked={toggleChecked}
+          />
+        ))}
+      </MaterialList>
+      <OptionsMenu onDeleteCheked={deleteChecked} />
     </>
   )
 }
