@@ -1,6 +1,6 @@
 import Koa from "koa"
 import { createServer } from "http"
-import socketIo from "socket.io"
+import { Server } from "socket.io"
 import Router from "koa-router"
 import Item from "./models/Item"
 import { Model } from "objection"
@@ -21,8 +21,13 @@ const secret = process.env.SECRET || "secret"
 
 const app = new Koa()
 const router = new Router()
-const server = createServer(app.callback())
-const io = socketIo(server)
+const nodeServer = createServer(app.callback())
+const io = new Server(nodeServer,
+  {
+    cors: {
+      origin: "*"
+    }
+  })
 
 require("socketio-auth")(io, {
   authenticate: function(socket, data, callback) {
@@ -53,6 +58,6 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
 
-server.listen(3001, () => {
+nodeServer.listen(3001, () => {
   console.log("Server listening on port 3001.")
 })
