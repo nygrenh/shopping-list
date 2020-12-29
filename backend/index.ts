@@ -56,7 +56,7 @@ router.get("/api/tasks", async (ctx, next) => {
     ctx.body = { error: "Forbidden" }
     return
   }
-  ctx.body = await Item.query().orderBy("created_at")
+  ctx.body = await Item.query().where({ deleted: false }).orderBy("created_at")
 })
 
 app

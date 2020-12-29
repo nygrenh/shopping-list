@@ -19,7 +19,7 @@ const handleAction = async (action: any) => {
         .patch({ text: action.value })
       break
     case "REMOVE_ITEM":
-      await Item.query().deleteById(action.id)
+      await Item.query().where('id', action.id).delete();
       break
       case "DELETE_CHECKED":
         await Item.query().where("checked", true).delete()
