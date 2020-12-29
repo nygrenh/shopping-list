@@ -1,17 +1,32 @@
 import io from "socket.io-client"
 let socket: SocketIOClient.Socket | null = null
 
-if (typeof window !== "undefined") {
+function createSocket() {
   socket = io(
     process.env.NODE_ENV === "production"
       ? "shopping-list.nygren.xyz"
       : "http://localhost:3001",
   {
     reconnection: true,
-    reconnectionAttempts: Number.MAX_VALUE,
+    reconnectionAttempts: Infinity,
     reconnectionDelayMax: 5000,
-    reconnectionDelay: 1000
+    reconnectionDelay: 1000,
+    transports: ["websocket"],
+    upgrade: false,
+    forceNew: true,
   })
+
+  socket.on("connect", () => {
+    console.log(`Connected to socket.`)
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log(`Socket disconnected. Reason: ${reason}`)
+  });
+}
+
+if (typeof window !== "undefined") {
+  createSocket()
 }
 
 export default socket

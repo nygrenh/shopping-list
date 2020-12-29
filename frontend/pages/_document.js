@@ -1,5 +1,5 @@
 import React from "react"
-import Document, { Head, Main, NextScript } from "next/document"
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheets as MuiServerStyleSheets } from "@material-ui/core/styles"
 import { ServerStyleSheet as StyledServerStyleSheet } from "styled-components"
 import theme from "../lib/theme"
@@ -7,7 +7,7 @@ import theme from "../lib/theme"
 export default class MyDocument extends Document {
   render() {
     return (
-      <html lang="en">
+      <Html>
         <Head>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     )
   }
 }
