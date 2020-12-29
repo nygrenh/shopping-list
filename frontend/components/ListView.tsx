@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useTypedSelector } from "../store"
-import { Button, Typography, Divider } from "@material-ui/core"
+import { Button, Typography, Divider, Fab } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { v4 as uuidv4 } from "uuid"
 import socket from "../lib/socket"
@@ -12,9 +12,19 @@ import OptionsMenu from "./OptionsMenu"
 import styled from "styled-components"
 import List from "./List"
 import useInterval from "@use-it/interval"
+import AddIcon from '@material-ui/icons/Add';
 
 let countSecondsDisconnected = 0
 let counterPreviouslyRan = new Date()
+
+const NewFab = styled(Fab)`
+`
+
+const NewFabContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 
 // @ts-ignore
 import { usePageVisibility } from "react-page-visibility"
@@ -80,11 +90,11 @@ const StyledDivider = styled(Divider)`
 const SubTitle = styled(Typography)`
   font-size: 1rem;
   font-weight: bold;
-  color: #4e4e4e;
+  color: #656565;
 `
 
 const ListWrapper = styled.div`
-  margin: 0 1rem;
+  margin: 0 0.5rem;
   margin-bottom: 0.5rem;
 `
 
@@ -181,9 +191,11 @@ const ListView = () => {
           toggleChecked={toggleChecked}
         />
         {listItems && (
-          <Button onClick={addNewItem} variant="outlined" fullWidth>
-            Uusi
-          </Button>
+          <NewFabContainer>
+            <NewFab onClick={addNewItem} color="primary">
+              <AddIcon />
+            </NewFab>
+          </NewFabContainer>
         )}
       </ListWrapper>
       <StyledDivider />

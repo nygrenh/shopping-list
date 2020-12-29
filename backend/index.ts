@@ -37,12 +37,18 @@ require("socketio-auth")(io, {
 
 io.on("connection", function(socket) {
   console.log("Client connected")
+  socket.on("disconnect", function(reason) {
+    console.log("Client disconnected: ", reason)
+  })
+
   socket.on("action", function(msg) {
     console.log(`Received an action: ${JSON.stringify(msg)}`)
     handleAction(msg)
     socket.broadcast.emit("action", msg)
   })
 })
+
+
 
 router.get("/api/tasks", async (ctx, next) => {
   if (ctx.req.headers.authorization !== secret) {

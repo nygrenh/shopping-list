@@ -14,42 +14,18 @@ const StyledButton = styled(Button)`
 `
 
 export default function OptionsMenu({ onDeleteCheked }: Props) {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
 
   return (
     <>
       <StyledButton
         variant="outlined"
-        aria-controls="simple-menu"
-        aria-haspopup="true"
-        onClick={handleClick}
+        fullWidth
+        onClick={() => {
+          onDeleteCheked()
+        }}
       >
-        Valikko
+        Poista ostetut ostokset
       </StyledButton>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem
-          onClick={() => {
-            onDeleteCheked()
-            handleClose()
-          }}
-        >
-          Poista valitut
-        </MenuItem>
-      </Menu>
     </>
   )
 }

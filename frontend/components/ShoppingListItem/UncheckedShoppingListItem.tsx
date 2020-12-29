@@ -4,15 +4,26 @@ import styled from "styled-components"
 
 const StyledListItem = styled.div`
   display: flex;
-  margin-bottom: 1rem;
+  align-items: center;
+  margin-bottom: 0.1rem;
 `
 
 const StyledCheckbox = styled(Checkbox)`
-  position: relative;
-  left: -10px;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 1rem;
+  color: rgb(74 69 69 / 54%);
 `
 
-export default ({ item, toggleChecked, updateText }) => (
+const StyledTextField = styled(TextField)`
+  margin-top: 0;
+  margin-bottom: 0;
+  .MuiOutlinedInput-notchedOutline {
+    border-color: white;
+  }
+`
+
+const UncheckedShoppingListItem = ({ item, toggleChecked, updateText }) => (
   <StyledListItem>
     <StyledCheckbox
       onClick={() => {
@@ -21,13 +32,18 @@ export default ({ item, toggleChecked, updateText }) => (
       checked={item.checked}
     />
 
-    <TextField
+    <StyledTextField
       onChange={e => {
-        updateText(item.id, e.target.value)
+        updateText(item.id, e.target.value.replace(/\n/g, ''))
       }}
       fullWidth
+      margin="dense"
       value={item.text}
       variant="outlined"
+      multiline
+      autoFocus={item.createdByUser}
     />
   </StyledListItem>
 )
+
+export default UncheckedShoppingListItem

@@ -7,9 +7,17 @@ import socket from "../lib/socket"
 import styled from "styled-components"
 
 const StyledTypography = styled(Typography)`
-  font-size: 3rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.3rem;
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  flex: 1;
+`
+
+const HeaderContainer = styled.div`
+  margin-top: 1rem;
+  margin-right: 1.5rem;
+  display: flex;
+  align-items: center;
 `
 
 const IndexPage = () => {
@@ -18,14 +26,10 @@ const IndexPage = () => {
   )
   return (
     <Container>
-      <StyledTypography variant="h1">
-        Ostoslista{" "}
-        {!currentlyConnected && (
-          <>
-            <CircularProgress size={25} />
-          </>
-        )}
-      </StyledTypography>
+      <HeaderContainer>
+      <StyledTypography variant="h1">Ostoslista</StyledTypography>
+      {!currentlyConnected && <CircularProgress size={25} />}
+      </HeaderContainer>
       <ListView />
     </Container>
   )

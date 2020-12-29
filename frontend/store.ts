@@ -8,7 +8,7 @@ const listItemsIntialState = null
 const listItemsReducer = (state: ListItem[] = listItemsIntialState, action): ListItem[] => {
   switch (action.type) {
     case "CREATE_ITEM":
-      return [...state, { id: action.id, text: "", checked: false }]
+      return [...state, { id: action.id, text: "", checked: false, createdByUser: !action.fromServer }]
     case "TOGGLE_CHECKED":
       return state.map(item => {
         if (item.id !== action.id) {
@@ -45,6 +45,7 @@ interface ListItem {
   id: string
   text: string
   checked: boolean
+  createdByUser: boolean | undefined
 }
 
 export interface RootState {

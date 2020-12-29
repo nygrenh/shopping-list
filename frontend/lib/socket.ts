@@ -2,6 +2,7 @@ import io from "socket.io-client"
 let socket: SocketIOClient.Socket | null = null
 
 function createSocket() {
+  console.log("Creating a socket.")
   socket = io(
     process.env.NODE_ENV === "production"
       ? "shopping-list.nygren.xyz"
@@ -11,9 +12,6 @@ function createSocket() {
     reconnectionAttempts: Infinity,
     reconnectionDelayMax: 5000,
     reconnectionDelay: 1000,
-    transports: ["websocket"],
-    upgrade: false,
-    forceNew: true,
   })
 
   socket.on("connect", () => {
@@ -22,6 +20,8 @@ function createSocket() {
 
   socket.on("disconnect", (reason) => {
     console.log(`Socket disconnected. Reason: ${reason}`)
+    if (reason === "io server disconnect") {
+    }
   });
 }
 

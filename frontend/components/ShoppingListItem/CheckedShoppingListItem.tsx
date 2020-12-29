@@ -4,10 +4,11 @@ import styled from "styled-components"
 
 const StyledTypography = styled(Typography)`
   text-decoration: line-through;
+  color: #757575;
 `
 
 const StyledCheckbox = styled(Checkbox)`
-  color: #646464 !important;
+  color: #969696 !important;
   position: relative;
   left: -10px;
 `
@@ -18,7 +19,7 @@ const StyledListItem = styled.div`
   align-items: center;
 `
 
-export default ({ item, toggleChecked, updateText }) => (
+const CheckedShoppingListItem = ({ item, toggleChecked, updateText }) => (
   <StyledListItem key={item.id}>
     <StyledCheckbox
       onClick={() => {
@@ -30,3 +31,5 @@ export default ({ item, toggleChecked, updateText }) => (
     <StyledTypography>{item.text}</StyledTypography>
   </StyledListItem>
 )
+
+export default CheckedShoppingListItem
